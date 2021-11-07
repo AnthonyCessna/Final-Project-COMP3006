@@ -1,8 +1,5 @@
-# Written by Anthony Cessna
+# Written by Anthony Cessna and Aaron Hunsaker
 # November 2021
-
-# This program reads in an Air Quality Excel file and generates plots as well as
-# cleans the data and outputs a table
 
 import csv
 from collections import namedtuple
