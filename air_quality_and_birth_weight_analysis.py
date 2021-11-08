@@ -187,9 +187,31 @@ class Import_AirQuality_Data:
         air_quality_df = pd.read_csv(csv_file[0])
 
         air_quality_df["state_abbrev"] = air_quality_df["State"].map(us_state_to_abbrev)
-        print(air_quality_df.head())
+        air_quality_df = air_quality_df[air_quality_df["state_abbrev"].notna()]
+        
+        air_quality_df["mean_hazardous_days_by_state"] = air_quality_df.groupby("State")["Hazardous Days"].transform("mean")
+        air_quality_df["mean_very_unhealthy_days_by_state"] = air_quality_df.groupby("State")["Very Unhealthy Days"].transform("mean")
+        air_quality_df["mean_unhealthy_days_by_state"] = air_quality_df.groupby("State")["Unhealthy Days"].transform("mean")
+        air_quality_df["mean_moderate_days_by_state"] = air_quality_df.groupby("State")["Moderate Days"].transform("mean")
+        air_quality_df["mean_good_days_by_state"] = air_quality_df.groupby("State")["Good Days"].transform("mean")
+
+        air_quality_df["mean_hazardous_days_weighted"] = air_quality_df["mean_hazardous_days_by_state"].transform(lambda x: x*20)
+        air_quality_df["mean_very_unhealthy_weighted"] = air_quality_df["mean_very_unhealthy_days_by_state"].transform(lambda x: x*10)
+        air_quality_df["mean_unhealthy_weighted"] = air_quality_df["mean_unhealthy_days_by_state"].transform(lambda x: x*5)
+
+        air_quality_df.to_csv("Pandas_DF.csv")
 
         logging.debug("Pandas dataframe created")
+
+        return air_quality_df
+
+    def chloropleth_usa_map(self, column):
+        states = self.dataframe["state_abbrev"].unique()
+        print(states)
+        values = self.dataframe[column].unique()
+        print(values)
+        fig = px.choropleth(locations=states, locationmode="USA-states", color=values, scope="usa")
+        fig.show()
 
     # This method loads each row into AirQuality_obj and creats a list of all the objects
     def _load_data_object_list(self):
@@ -298,10 +320,7 @@ def main():
     ############### Test Area ####################
     obj = Import_AirQuality_Data()
     
-    state = "Washington"
-
-    print(obj.worst_air_quality_in_state(state))
-    print(obj.best_air_quality_in_state(state))
+    obj.chloropleth_usa_map("mean_moderate_days_by_state")
     
     
 
