@@ -5,6 +5,7 @@ import csv
 from collections import namedtuple
 from collections import defaultdict
 import logging
+import plotly.express as px
 import os
 import argparse
 import statistics
@@ -123,7 +124,71 @@ class Import_AirQuality_Data:
         # Gets list of csv files in directory
         csv_file = glob.glob("annual_aqi_by_county_*.csv")
 
+        us_state_to_abbrev = {
+            "Alabama": "AL",
+            "Alaska": "AK",
+            "Arizona": "AZ",
+            "Arkansas": "AR",
+            "California": "CA",
+            "Colorado": "CO",
+            "Connecticut": "CT",
+            "Delaware": "DE",
+            "Florida": "FL",
+            "Georgia": "GA",
+            "Hawaii": "HI",
+            "Idaho": "ID",
+            "Illinois": "IL",
+            "Indiana": "IN",
+            "Iowa": "IA",
+            "Kansas": "KS",
+            "Kentucky": "KY",
+            "Louisiana": "LA",
+            "Maine": "ME",
+            "Maryland": "MD",
+            "Massachusetts": "MA",
+            "Michigan": "MI",
+            "Minnesota": "MN",
+            "Mississippi": "MS",
+            "Missouri": "MO",
+            "Montana": "MT",
+            "Nebraska": "NE",
+            "Nevada": "NV",
+            "New Hampshire": "NH",
+            "New Jersey": "NJ",
+            "New Mexico": "NM",
+            "New York": "NY",
+            "North Carolina": "NC",
+            "North Dakota": "ND",
+            "Ohio": "OH",
+            "Oklahoma": "OK",
+            "Oregon": "OR",
+            "Pennsylvania": "PA",
+            "Rhode Island": "RI",
+            "South Carolina": "SC",
+            "South Dakota": "SD",
+            "Tennessee": "TN",
+            "Texas": "TX",
+            "Utah": "UT",
+            "Vermont": "VT",
+            "Virginia": "VA",
+            "Washington": "WA",
+            "West Virginia": "WV",
+            "Wisconsin": "WI",
+            "Wyoming": "WY",
+            "District of Columbia": "DC",
+            "American Samoa": "AS",
+            "Guam": "GU",
+            "Northern Mariana Islands": "MP",
+            "Puerto Rico": "PR",
+            "United States Minor Outlying Islands": "UM",
+            "U.S. Virgin Islands": "VI",
+        }
+
         air_quality_df = pd.read_csv(csv_file[0])
+
+        air_quality_df["state_abbrev"] = air_quality_df["State"].map(us_state_to_abbrev)
+        print(air_quality_df.head())
+
         logging.debug("Pandas dataframe created")
 
     # This method loads each row into AirQuality_obj and creats a list of all the objects
@@ -198,6 +263,8 @@ class Import_AirQuality_Data:
         worst_air_quality = worst_air_obj.county
         return worst_air_quality
 
+    # Method return the name of the county in the given state with the best air quality
+    # Good air quality defined as least Hazardous days, then least Very Unhealthy days etc...
     def best_air_quality_in_state(self, state):
         
         best_air_quality = ""
