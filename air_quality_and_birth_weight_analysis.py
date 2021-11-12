@@ -350,6 +350,7 @@ class Import_AirQuality_Data:
                 scope="usa", title="Air Quality by State", labels={"color": "Air Quality Score", "locations" : "State"})
         fig.show()
         logging.debug(f"chloropleth map created using column: {column}")
+        fig.write_image("fig1.pdf")
 
     # This method loads each row into AirQuality_obj and creats a list of all the objects
     def _load_data_object_list(self):
