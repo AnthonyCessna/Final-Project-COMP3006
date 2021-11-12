@@ -2,3 +2,8 @@ air_quality.log
 README_proposal.md
 Pandas_DF.csv
 fig1.pdf
+bin/
+etc/
+lib/
+share/
+pyvenv.cfg
