@@ -332,15 +332,21 @@ class Import_AirQuality_Data:
         return air_quality_df
 
     # This method creates a chloropleth map giving values to states based on any column of data
-    def chloropleth_usa_map(self, column):
+    def chloropleth_usa_map(self, column, output):
         """
         Creates a US map graphic coloring the states by a metric specified in the column parameter
 
         Parameters
         ----------
-        column : Series
+        column : str
             Data to be used to color the states in the map
+        output : str
+            Output of the function either "pdf" or "web"
         """
+
+        if output not in ["pdf", "web"]:
+            raise TypeError("Argument must be either pdf or web")
+
         states = self.dataframe["state_abbrev"].unique() # Subsets data to keep one row for each state
         
         values = self.dataframe[column].unique()
@@ -348,9 +354,15 @@ class Import_AirQuality_Data:
         # Creates map graphic
         fig = px.choropleth(locations=states, locationmode="USA-states", color=values, 
                 scope="usa", title="Air Quality by State", labels={"color": "Air Quality Score", "locations" : "State"})
-        fig.show()
-        logging.debug(f"chloropleth map created using column: {column}")
-        fig.write_image("fig1.pdf")
+        
+        if output == "web":
+
+            fig.show()
+            logging.debug(f"chloropleth map output to web, created using column: {column}")
+
+        elif output == "pdf":
+            fig.write_image("fig1.pdf")
+            logging.debug(f"chloropleth map output to pdf, created using column: {column}")
 
     # This method loads each row into AirQuality_obj and creats a list of all the objects
     def _load_data_object_list(self):
@@ -485,7 +497,7 @@ def main():
     ############### Test Area ####################
     obj = Import_AirQuality_Data()
     
-    obj.chloropleth_usa_map("air_quality_score")
+    obj.chloropleth_usa_map("air_quality_score", "pdf")
     
     
 
