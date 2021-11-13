@@ -174,6 +174,7 @@ class Import_AirQuality_Data:
         self.numpy_arrays = self._numpy_array()
         self.dataframe = self._pandas_data_frame()
         self.obj_list = self._load_data_object_list()
+        self.best_worst_dataframe = self.extreme_values_data_frame()
         logging.debug("Import_AirQuality_Data object successfully initialized")
 
 
@@ -478,6 +479,37 @@ class Import_AirQuality_Data:
         best_air_quality = best_air_obj.county
         return best_air_quality
 
+    def extreme_values_data_frame(self):
+        df = self.dataframe
+
+        new_df = pd.DataFrame()
+
+        state_list = []
+        county_list = []
+        aqi_list = []
+
+        for state in df["State"].unique():
+            best = self.best_air_quality_in_state(state)
+            worst = self.worst_air_quality_in_state(state)
+            best_aqi = df.loc[df["County"] == best, 'Max AQI'].iloc[0]
+            worst_aqi = df.loc[df["County"] == worst, 'Max AQI'].iloc[0]
+
+            state_list.append(state)
+            state_list.append(state)
+            county_list.append(best)
+            county_list.append(worst)
+            aqi_list.append(best_aqi)
+            aqi_list.append(worst_aqi)
+
+        new_df["State"] = state_list
+        new_df["County"] = county_list
+        new_df["Max_AQI"] = aqi_list
+        return new_df
+
+    def extreme_aqi_values_sunburst(self):
+        fig = px.sunburst(self.best_worst_dataframe, path=["State", "County"], values="Max_AQI")
+        fig.show()
+
 def main():
     # sets root logger to DEBUG
     rootLogger = logging.getLogger()
@@ -497,7 +529,7 @@ def main():
     ############### Test Area ####################
     obj = Import_AirQuality_Data()
     
-    obj.chloropleth_usa_map("air_quality_score", "pdf")
+    obj.extreme_aqi_values_sunburst()
     
     
 
