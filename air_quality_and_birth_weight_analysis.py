@@ -335,7 +335,7 @@ class Import_AirQuality_Data:
         ----------
         None
         """
-         # Exports a csv of the dataframe
+        # Exports a csv of the dataframe
         self.dataframe.to_csv("Air_Quality_by_county.csv")
         logging.debug("Pandas dataframe created, and csv file created")
 
@@ -578,6 +578,7 @@ class BirthDataStats():
 
     def __init__(self):
         self.birth_data()
+        self.df = self.pandas_df()
 
     def __repr__(self):
         return "AutoMPGData()"
@@ -609,8 +610,13 @@ class BirthDataStats():
                 self.data.append(b)
 
     def pandas_df(self):
-        self.df = pd.DataFrame(self.data)
-        return self.df
+        df = pd.DataFrame(self.data)
+        return df
+
+    def birth_data_csv(self):
+        # Exports a csv of the dataframe
+        self.df.to_csv("Birth_Data.csv")
+        logging.debug("csv file created")
 
     def avg_bw_county(self):
         x = self.pandas_df().groupby("county").mean()
@@ -656,6 +662,29 @@ class BirthDataStats():
         plt.plot(x["average_birth_weight"])
         plt.show()        
 
+class BirthWeight_and_AirQuality():
+
+    def __init__(self, air_quality_obj, birth_obj):
+        self.air_quality_obj = air_quality_obj
+        self.birth_obj = birth_obj
+        self.merged_dataframe = self.combined_dataframe()
+
+    def combined_dataframe(self):
+        air_quality_df = self.air_quality_obj.dataframe
+        birth_df = self.birth_obj.df
+        
+        counties = birth_df["county"].tolist()
+        counties_list = [x[:x.find("County")-1] for x in counties]
+
+        birth_df["County"] = counties_list
+
+        merged_df = pd.merge(air_quality_df, birth_df, on="County")
+        
+        return merged_df
+        
+
+
+
 def main():
     # sets root logger to DEBUG
     rootLogger = logging.getLogger()
@@ -686,21 +715,24 @@ def main():
     args = parser.parse_args()
 
     # Creates object of the air quality data
-    obj = Import_AirQuality_Data()
+    air_quality_obj = Import_AirQuality_Data()
     
     if args.web_output:
-        obj.chloropleth_usa_map("air_quality_score", "web")
-        obj.extreme_aqi_values_sunburst("web")
+        air_quality_obj.chloropleth_usa_map("air_quality_score", "web")
+        air_quality_obj.extreme_aqi_values_sunburst("web")
     else:
-        obj.chloropleth_usa_map("air_quality_score", "pdf")
-        obj.extreme_aqi_values_sunburst("pdf")
+        air_quality_obj.chloropleth_usa_map("air_quality_score", "pdf")
+        air_quality_obj.extreme_aqi_values_sunburst("pdf")
     
     if args.csv:
-        obj.air_quality_csv()
+        air_quality_obj.air_quality_csv()
 
+##############################################################
     birth = BirthDataStats()
-    
+    birth.birth_data_csv()
 
+    combined = BirthWeight_and_AirQuality(air_quality_obj, birth)
+    combined.combined_dataframe()
 
 if __name__ == '__main__':
     main()
