@@ -232,7 +232,7 @@ class Import_AirQuality_Data:
 
         Parameters
         ----------
-        none
+        None
         """
         # Gets list of csv files in directory
         csv_file = glob.glob("annual_aqi_by_county_*.csv")
@@ -325,12 +325,20 @@ class Import_AirQuality_Data:
 
         air_quality_df["air_quality_score"] = air_quality_score_list
 
-        # Exports a csv of the dataframe
-        air_quality_df.to_csv("Pandas_DF.csv")
-
-        logging.debug("Pandas dataframe created, and csv file created")
-
         return air_quality_df
+
+    # Method outputs data frame to csv file
+    def air_quality_csv(self):
+        """
+        Out puts a csvfile of the Dataframe stored in the object
+
+        Parameters
+        ----------
+        None
+        """
+         # Exports a csv of the dataframe
+        self.dataframe.to_csv("Air_Quality_by_county.csv")
+        logging.debug("Pandas dataframe created, and csv file created")
 
     # This method creates a chloropleth map giving values to states based on any column of data
     def chloropleth_usa_map(self, column, output):
@@ -362,7 +370,7 @@ class Import_AirQuality_Data:
             logging.debug(f"chloropleth map output to web, created using column: {column}")
 
         elif output == "pdf":
-            fig.write_image("fig1.pdf")
+            fig.write_image("Air_Quality_in_US_by_State.pdf")
             logging.debug(f"chloropleth map output to pdf, created using column: {column}")
 
     # This method loads each row into AirQuality_obj and creats a list of all the objects
@@ -451,7 +459,11 @@ class Import_AirQuality_Data:
             elif obj > worst_air_obj and obj.state == state:
                  worst_air_obj = obj
 
-        worst_air_quality = worst_air_obj.county
+        if worst_air_obj is None:
+            raise ValueError("Not a valid state in argument")
+        else:
+            worst_air_quality = worst_air_obj.county
+
         return worst_air_quality
 
     # Method return the name of the county in the given state with the best air quality
@@ -476,10 +488,21 @@ class Import_AirQuality_Data:
             elif obj < best_air_obj and obj.state == state:
                  best_air_obj = obj
 
-        best_air_quality = best_air_obj.county
+        if best_air_obj is None:
+            raise ValueError("Not a valid state in argument")
+        else:
+            best_air_quality = best_air_obj.county
+
         return best_air_quality
 
+    # This method creates a data frame that contains the counties in every state with the best and worst air quality
+    # and then also lists those counties max AQI experienced in a year
     def extreme_values_data_frame(self):
+        """
+        Returns a pandas DataFrame that contains the counties in every state with the best and worst air quality
+        and then also lists those counties max AQI experienced in a year
+        """
+        
         df = self.dataframe
 
         new_df = pd.DataFrame()
@@ -506,9 +529,33 @@ class Import_AirQuality_Data:
         new_df["Max_AQI"] = aqi_list
         return new_df
 
-    def extreme_aqi_values_sunburst(self):
-        fig = px.sunburst(self.best_worst_dataframe, path=["State", "County"], values="Max_AQI")
-        fig.show()
+    # This Method creates a sunburst graphic which displays counties in state with best and worst air quality and specifies maxc AQI values
+    def extreme_aqi_values_sunburst(self, output):
+        """
+        Creates a sunburst graphic which displays counties in state with best and worst air quality and specifies maxc AQI values
+
+        Parameters
+        ----------
+        output : str
+            Output of the function either "pdf" or "web"
+        """
+
+        if output not in ["pdf", "web"]:
+            raise TypeError("Argument must be either pdf or web")
+
+        fig = px.sunburst(self.best_worst_dataframe, path=["State", "County"], values="Max_AQI", title="Air Quality by State", 
+                                labels={"labels": "County", "Max_AQI" : "Max AQI", "parent" : "State"})
+
+        if output == "web":
+
+            fig.show()
+            logging.debug("Starburst map output to web")
+
+        elif output == "pdf":
+            fig.write_image("Best_and_Worst_AQI_by_State.pdf")
+            logging.debug("Starburst map output to pdf")
+
+        
 
 def main():
     # sets root logger to DEBUG
@@ -525,13 +572,32 @@ def main():
     sh.setLevel(logging.INFO)
     rootLogger.addHandler(sh)
 
+    # Set up argument parser
+    parser = argparse.ArgumentParser(
+        description="Analyze air quality data and birth rate data to find trends"
+    )
 
-    ############### Test Area ####################
+    # If flag is included out put interactive plots to interactive web format, default is to save plots as pdf's
+    parser.add_argument("-w", "--web_output", action="store_true")
+
+    # If flag is included output csv file of air quality data
+    parser.add_argument("-c", "--csv", action="store_true")
+
+    # Parse the arguments given
+    args = parser.parse_args()
+
+    # Creates object of the air quality data
     obj = Import_AirQuality_Data()
     
-    obj.extreme_aqi_values_sunburst()
+    if args.web_output:
+        obj.chloropleth_usa_map("air_quality_score", "web")
+        obj.extreme_aqi_values_sunburst("web")
+    else:
+        obj.chloropleth_usa_map("air_quality_score", "pdf")
+        obj.extreme_aqi_values_sunburst("pdf")
     
-    
+    if args.csv:
+        obj.air_quality_csv()
 
 
 if __name__ == '__main__':

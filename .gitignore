@@ -7,3 +7,6 @@ etc/
 lib/
 share/
 pyvenv.cfg
+Air_Quality_by_county.csv
+Air_Quality_in_US_by_State.pdf
+Best_and_Worst_AQI_by_State.pdf
