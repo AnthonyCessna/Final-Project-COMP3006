@@ -692,19 +692,19 @@ class BirthWeight_and_AirQuality():
     def combined_dataframe(self):
         air_quality_df = self.air_quality_obj.dataframe
         birth_df = self.birth_obj.df
-        
+
         counties = birth_df["county"].tolist()
         counties_list = [x[:x.find("County")-1] for x in counties]
 
         birth_df["County"] = counties_list
 
         merged_df = pd.merge(air_quality_df, birth_df, on="County")
-        
+
         return merged_df
-    
+
+
+
     def AQI_bw_by_state_bar_chart(self,output):
-        """ creates bar chart showing AQI and  avg BW by counties with in state
-        """
         tst = self.merged_dataframe
         fig = px.bar(tst, x = "state", y = "avg birth weight by county", color ="Days with AQI",
             title = "AQI and Birth Wiegt Avergea for County Groped by State")
@@ -719,9 +719,6 @@ class BirthWeight_and_AirQuality():
             logging.debug("AQI_bw_by_state_bar_chart  output to pdf")
 
     def AQI_bw_by_county_area_chart(self,output):
-         """ 
-         creates area chart showing AQI and  avg BW for county
-         """
         temp = self.merged_dataframe
         fig = px.area(temp, x = "county" , y = ["Days with AQI", "avg birth weight by county"],
         color = "Days with AQI", title="AQI and Birthweight by County")
@@ -735,7 +732,6 @@ class BirthWeight_and_AirQuality():
         elif output == "pdf":
             fig.write_image("AQI_bw_by_county_area_chart.pdf")
             logging.debug("AQI_bw_by_county_area_chart  output to pdf")
-        
 
 
 
