@@ -589,7 +589,7 @@ class BirthDataStats():
         Birth = namedtuple("Birth"," year, county_state, a,b,c,d,e, weight, f,g")
 
 
-        with open("og_birth_data.csv","r") as f:
+        with open("birth_data.csv","r") as f:
             reader = csv.reader(f)
             next(reader)
             for row in reader:
