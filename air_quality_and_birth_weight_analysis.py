@@ -701,6 +701,40 @@ class BirthWeight_and_AirQuality():
         merged_df = pd.merge(air_quality_df, birth_df, on="County")
         
         return merged_df
+    
+    def AQI_bw_by_state_bar_chart(self,output):
+        """ creates bar chart showing AQI and  avg BW by counties with in state
+        """
+        tst = self.merged_dataframe
+        fig = px.bar(tst, x = "state", y = "avg birth weight by county", color ="Days with AQI",
+            title = "AQI and Birth Wiegt Avergea for County Groped by State")
+        fig.update_yaxes(showgrid=False,visible=False)
+        if output == "web":
+
+            fig.show()
+            logging.debug("AQI_bw_by_state_bar_chart")
+
+        elif output == "pdf":
+            fig.write_image("AQI_bw_by_state_bar_chart.pdf")
+            logging.debug("AQI_bw_by_state_bar_chart  output to pdf")
+
+    def AQI_bw_by_county_area_chart(self,output):
+         """ 
+         creates area chart showing AQI and  avg BW for county
+         """
+        temp = self.merged_dataframe
+        fig = px.area(temp, x = "county" , y = ["Days with AQI", "avg birth weight by county"],
+        color = "Days with AQI", title="AQI and Birthweight by County")
+        fig.update_yaxes(showgrid=False,visible=False)
+
+        if output == "web":
+
+            fig.show()
+            logging.debug("AQI_bw_by_county_area_chart")
+
+        elif output == "pdf":
+            fig.write_image("AQI_bw_by_county_area_chart.pdf")
+            logging.debug("AQI_bw_by_county_area_chart  output to pdf")
         
 
 
@@ -762,8 +796,17 @@ def main():
         birth.lowest_weight_in_state("pdf")
         birth.highest_weight_in_state("pdf")
   
+####################################################################
+ #merged object and charts, change or toss if you don't like them
     combined = BirthWeight_and_AirQuality(air_quality_obj, birth)
-    combined.combined_dataframe()
+
+    if args.web_output:
+        combined.AQI_bw_by_state_bar_chart("web")
+        combined.AQI_bw_by_county_area_chart("web")
+
+    else:
+        combined.AQI_bw_by_state_bar_chart("pdf")
+        combined.AQI_bw_by_county_area_chart("pdf")
 
 if __name__ == '__main__':
     main()
