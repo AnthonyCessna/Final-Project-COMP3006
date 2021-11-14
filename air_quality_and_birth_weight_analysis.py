@@ -571,24 +571,17 @@ class BirthObject():
     average_birth_weight: float
 
 class BirthDataStats():
-    """
-    BirthDataStats() loads the birth_data.csv, wrangles some of the dataclass
-    since I am only using 4 fields: year, county, state, average_birth_weight.
+    """ 
+    data stats class that loasds data and creats visualizations for analyizing birth weigh
+    data by state, and county
     """
 
     def __init__(self):
         self.birth_data()
         self.df = self.pandas_df()
 
-    def __repr__(self):
-        return "AutoMPGData()"
-
     def __iter__(self):
         return iter(self.data)
-
-    #default sort for now nit sure if we need it
-    def sort(self):
-        return self.data.sort()
 
 
     def birth_data(self):
@@ -596,7 +589,7 @@ class BirthDataStats():
         Birth = namedtuple("Birth"," year, county_state, a,b,c,d,e, weight, f,g")
 
 
-        with open("birth_data.csv","r") as f:
+        with open("og_birth_data.csv","r") as f:
             reader = csv.reader(f)
             next(reader)
             for row in reader:
@@ -609,58 +602,85 @@ class BirthDataStats():
 
                 self.data.append(b)
 
+
+
+
+
     def pandas_df(self):
-        df = pd.DataFrame(self.data)
-        return df
+        data_frame = pd.DataFrame(self.data)
+        data_frame["avg birth weight by state"] = data_frame.groupby("state")["average_birth_weight"].transform("mean")
+        data_frame["min birth weight by state"] = data_frame.groupby("state")["average_birth_weight"].transform("min")
+        data_frame["county with lowest birth weight"]= data_frame.groupby("state")["county"].transform("min")
+        data_frame["max birth weight by state"] = data_frame.groupby("state")["average_birth_weight"].transform("max")
+        data_frame["county with highest birth weight"]= data_frame.groupby("state")["county"].transform("max")
+        data_frame["avg birth weight by county"] = data_frame.groupby("county")["average_birth_weight"].transform("mean")
+        data_frame["min birth weight by county"] = data_frame.groupby("county")["average_birth_weight"].transform("min")
+        data_frame["max birth weight by county"] = data_frame.groupby("county")["average_birth_weight"].transform("max")
+        return data_frame
 
-    def birth_data_csv(self):
-        # Exports a csv of the dataframe
-        self.df.to_csv("Birth_Data.csv")
-        logging.debug("csv file created")
 
-    def avg_bw_county(self):
-        x = self.pandas_df().groupby("county").mean()
-        plt.plot(x["average_birth_weight"],'pg')
-        plt.show()
 
-    def max_bw_county(self):
-        x = self.pandas_df().groupby("county").max()
-        plt.plot(x["average_birth_weight"],'pg')
-        plt.show()
 
-    def min_bw_county(self):
-        x = self.pandas_df().groupby("county").max()
-        plt.plot(x["average_birth_weight"],'pg')
-        plt.show()
+    def yearly_bw_county(self,output):
+        temp = self.df
+        fig = px.area(temp, x = "county" , y = ["year", "avg birth weight by county"], color = "year",
+            title="2016-2018 Breakdown of Average Birth Weight by County")
+        fig.update_yaxes(showgrid=False,visible=False)
 
-    def avg_bw_state(self):
-        plt.plot(self.pandas_df().groupby("state").mean()["average_birth_weight"])
-        plt.show()
+        if output == "web":
 
-    def max_bw_state(self):
-        x = self.pandas_df().groupby("state").min()
-        plt.plot(x["average_birth_weight"])
-        plt.show()
+            fig.show()
+            logging.debug("yearly birth weight by county area chartoutput to web")
 
-    def min_bw_state(self):
-        x = self.pandas_df().groupby("state").min()
-        plt.plot(x["average_birth_weight"])
-        plt.show()
+        elif output == "pdf":
+            fig.write_image("yearly_bw_county.pdf")
+            logging.debug("Area chart output to pdf")
 
-    def avg_bw_year(self):
-        x = self.pandas_df().groupby("year").mean()
-        plt.plot(x["average_birth_weight"],'p')
-        plt.show()
 
-    def max_bw_year(self):
-        x = self.pandas_df().groupby("year").max()
-        plt.plot(x["average_birth_weight"],'p')
-        plt.show()
+    def yearly_bw_state(self,output):
+        tst = self.df
+        fig = px.bar(tst, x = "state", y = ["year","avg birth weight by state"], color ="year",
+            title = "2016-2018 Breakdown of Average Birthweight by State")
+        fig.update_yaxes(showgrid=False,visible=False)
+        if output == "web":
 
-    def min_bw_year(self):
-        x = self.pandas_df().groupby("year").min()
-        plt.plot(x["average_birth_weight"])
-        plt.show()        
+            fig.show()
+            logging.debug("yearly birth weight by state bar chart to web")
+
+        elif output == "pdf":
+            fig.write_image("yearly_bw_state.pdf")
+            logging.debug("bar chart output to pdf")
+
+
+    def lowest_weight_in_state(self,output):
+        temp = self.df
+        fig = px.scatter(temp, x = "county with lowest birth weight", y ="min birth weight by state" ,
+            color = "state", size = "min birth weight by state", title= "Lowest Birth Weight in State")
+        fig.update_yaxes(visible=False)
+        fig.update_xaxes(showgrid=False)
+        if output == "web":
+
+            fig.show()
+            logging.debug("Lowest birth weight in state scatter chart to web")
+
+        elif output == "pdf":
+            fig.write_image("lowest_weight_in_state.pdf")
+            logging.debug("Lowest weight in state scatter chart output to pdf")
+
+    def highest_weight_in_state(self,output):
+        temp = self.df
+        fig = px.scatter(temp, x = "county with highest birth weight", y = "max birth weight by state" ,
+            color = "state", size = "max birth weight by state", title="Highest Birth Weight in State")
+        fig.update_yaxes(visible=False)
+        fig.update_xaxes(showgrid=False)
+        if output == "web":
+
+            fig.show()
+            logging.debug("Highest birth weight in state scatter chart to web")
+
+        elif output == "pdf":
+            fig.write_image("highest_weight_in_state.pdf")
+            logging.debug("Highest weight in state scatter chart output to pdf")   
 
 class BirthWeight_and_AirQuality():
 
@@ -728,9 +748,20 @@ def main():
         air_quality_obj.air_quality_csv()
 
 ##############################################################
+        # creats birth weight object
     birth = BirthDataStats()
-    birth.birth_data_csv()
 
+    if args.web_output:
+        birth.yearly_bw_state("web")
+        birth.yearly_bw_county("web")
+        birth.lowest_weight_in_state("web")
+        birth.highest_weight_in_state("web")
+    else:
+        birth.yearly_bw_state("pdf")
+        birth.yearly_bw_county("pdf")
+        birth.lowest_weight_in_state("pdf")
+        birth.highest_weight_in_state("pdf")
+  
     combined = BirthWeight_and_AirQuality(air_quality_obj, birth)
     combined.combined_dataframe()
 
