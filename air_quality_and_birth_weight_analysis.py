@@ -603,61 +603,74 @@ class BirthDataStats():
                 self.data.append(b)
 
 
-
-
-
     def pandas_df(self):
         data_frame = pd.DataFrame(self.data)
-        data_frame["avg birth weight by state"] = data_frame.groupby("state")["average_birth_weight"].transform("mean")
-        data_frame["min birth weight by state"] = data_frame.groupby("state")["average_birth_weight"].transform("min")
-        data_frame["county with lowest birth weight"]= data_frame.groupby("state")["county"].transform("min")
-        data_frame["max birth weight by state"] = data_frame.groupby("state")["average_birth_weight"].transform("max")
-        data_frame["county with highest birth weight"]= data_frame.groupby("state")["county"].transform("max")
-        data_frame["avg birth weight by county"] = data_frame.groupby("county")["average_birth_weight"].transform("mean")
-        data_frame["min birth weight by county"] = data_frame.groupby("county")["average_birth_weight"].transform("min")
-        data_frame["max birth weight by county"] = data_frame.groupby("county")["average_birth_weight"].transform("max")
+        
+        data_frame["avg_birth_weight_by_state"] = data_frame.groupby(["state", "year"])["average_birth_weight"].transform("mean")
+        data_frame["min birth weight by state"] = data_frame.groupby(["state", "year"])["average_birth_weight"].transform("min")
+        data_frame["idx_county_with_lowest_birthweight"]= data_frame.groupby(["state", "year"])["average_birth_weight"].transform("idxmin")
+        data_frame["max birth weight by state"] = data_frame.groupby(["state", "year"])["average_birth_weight"].transform("max")
+        data_frame["idx_county_with_highest_birthweight"]= data_frame.groupby(["state", "year"])["average_birth_weight"].transform("idxmax")
+        
+        data_frame["min birth weight by county"] = data_frame.groupby(["state", "year"])["average_birth_weight"].transform("min")
+        data_frame["max birth weight by county"] = data_frame.groupby(["state", "year"])["average_birth_weight"].transform("max")
+
+        county_lowest_list = []
+        for index, row in data_frame.iterrows():
+            county_lowest_list.append(data_frame.iloc[row["idx_county_with_lowest_birthweight"]]["county"])
+
+        data_frame["county_in_state_lowest_birthweight_by_year"] = county_lowest_list
+
+        county_highest_list = []
+        for index, row in data_frame.iterrows():
+            county_highest_list.append(data_frame.iloc[row["idx_county_with_highest_birthweight"]]["county"])
+
+        data_frame["county_in_state_highest_birthweight_by_year"] = county_highest_list
+
         return data_frame
 
 
+    def birth_csv(self):
+        """
+        Out puts a csvfile of the Dataframe stored in the object
 
-
-    def yearly_bw_county(self,output):
-        temp = self.df
-        fig = px.area(temp, x = "county" , y = ["year", "avg birth weight by county"], color = "year",
-            title="2016-2018 Breakdown of Average Birth Weight by County")
-        fig.update_yaxes(showgrid=False,visible=False)
-
-        if output == "web":
-
-            fig.show()
-            logging.debug("yearly birth weight by county area chartoutput to web")
-
-        elif output == "pdf":
-            fig.write_image("yearly_bw_county.pdf")
-            logging.debug("Area chart output to pdf")
-
+        Parameters
+        ----------
+        None
+        """
+        # Exports a csv of the dataframe
+        self.df.to_csv("Birth_data_by_county.csv")
+        logging.debug("Pandas dataframe created, and csv file created")
 
     def yearly_bw_state(self,output):
         tst = self.df
-        fig = px.bar(tst, x = "state", y = ["year","avg birth weight by state"], color ="year",
-            title = "2016-2018 Breakdown of Average Birthweight by State")
-        fig.update_yaxes(showgrid=False,visible=False)
+        fig = px.scatter(tst, x = "state", y = "avg_birth_weight_by_state", color ="year",
+            title = "2016-2018 Breakdown of Average Birthweight by State", labels={
+                "year" : "Year", "avg_birth_weight_by_state" : "Average Birth Weight (lbs)",
+                "state" : "State"
+            }) 
+       
         if output == "web":
 
             fig.show()
-            logging.debug("yearly birth weight by state bar chart to web")
+            logging.debug("yearly birth weight by state scatter plot to web")
 
         elif output == "pdf":
             fig.write_image("yearly_bw_state.pdf")
-            logging.debug("bar chart output to pdf")
+            logging.debug("scatter chart output to pdf")
 
 
-    def lowest_weight_in_state(self,output):
+    def lowest_weight_in_state(self,output, year):
         temp = self.df
-        fig = px.scatter(temp, x = "county with lowest birth weight", y ="min birth weight by state" ,
-            color = "state", size = "min birth weight by state", title= "Lowest Birth Weight in State")
-        fig.update_yaxes(visible=False)
-        fig.update_xaxes(showgrid=False)
+        temp_year = temp[temp["year"] == year]
+        temp_drop = temp_year.drop_duplicates(subset="state")
+        
+        fig = px.bar(temp_drop, x = "state", y ="min birth weight by county", title= "County with the Lowest Birth Weight in State", barmode='group',
+                        log_y=True, text="county_in_state_lowest_birthweight_by_year", labels={
+                            "average_birth_weight" : "Average Birth Weight in County (lbs)",
+                            "state" : "State"
+                        })
+       
         if output == "web":
 
             fig.show()
@@ -667,12 +680,17 @@ class BirthDataStats():
             fig.write_image("lowest_weight_in_state.pdf")
             logging.debug("Lowest weight in state scatter chart output to pdf")
 
-    def highest_weight_in_state(self,output):
+    def highest_weight_in_state(self,output, year):
         temp = self.df
-        fig = px.scatter(temp, x = "county with highest birth weight", y = "max birth weight by state" ,
-            color = "state", size = "max birth weight by state", title="Highest Birth Weight in State")
-        fig.update_yaxes(visible=False)
-        fig.update_xaxes(showgrid=False)
+        temp_year = temp[temp["year"] == year]
+        temp_drop = temp_year.drop_duplicates(subset="state")
+        
+        fig = px.bar(temp_drop, x = "state", y ="max birth weight by county", title= "County with the Highest Birth Weight in State", barmode='group',
+                        log_y=True, text="county_in_state_highest_birthweight_by_year", labels={
+                            "average_birth_weight" : "Average Birth Weight in County (lbs)",
+                            "state" : "State"
+                        })
+
         if output == "web":
 
             fig.show()
@@ -692,46 +710,34 @@ class BirthWeight_and_AirQuality():
     def combined_dataframe(self):
         air_quality_df = self.air_quality_obj.dataframe
         birth_df = self.birth_obj.df
+        birth_df = birth_df[birth_df["year"] == "2018"]
+        birth_df = birth_df.drop_duplicates(subset=["county", "state"])
+        
 
         counties = birth_df["county"].tolist()
         counties_list = [x[:x.find("County")-1] for x in counties]
 
         birth_df["County"] = counties_list
 
-        merged_df = pd.merge(air_quality_df, birth_df, on="County")
+        abbrev = birth_df["state"].tolist()
+        abbrev_list = [x.strip() for x in abbrev]
+        birth_df["state_abbrev"] = abbrev_list
 
+        merged_df = pd.merge(air_quality_df, birth_df, on=["County", "state_abbrev"])
+        
         return merged_df
 
+    def combined_csv(self):
+        """
+        Out puts a csvfile of the Dataframe stored in the object
 
-
-    def AQI_bw_by_state_bar_chart(self,output):
-        tst = self.merged_dataframe
-        fig = px.bar(tst, x = "state", y = "avg birth weight by county", color ="Days with AQI",
-            title = "AQI and Birth Wiegt Avergea for County Groped by State")
-        fig.update_yaxes(showgrid=False,visible=False)
-        if output == "web":
-
-            fig.show()
-            logging.debug("AQI_bw_by_state_bar_chart")
-
-        elif output == "pdf":
-            fig.write_image("AQI_bw_by_state_bar_chart.pdf")
-            logging.debug("AQI_bw_by_state_bar_chart  output to pdf")
-
-    def AQI_bw_by_county_area_chart(self,output):
-        temp = self.merged_dataframe
-        fig = px.area(temp, x = "county" , y = ["Days with AQI", "avg birth weight by county"],
-        color = "Days with AQI", title="AQI and Birthweight by County")
-        fig.update_yaxes(showgrid=False,visible=False)
-
-        if output == "web":
-
-            fig.show()
-            logging.debug("AQI_bw_by_county_area_chart")
-
-        elif output == "pdf":
-            fig.write_image("AQI_bw_by_county_area_chart.pdf")
-            logging.debug("AQI_bw_by_county_area_chart  output to pdf")
+        Parameters
+        ----------
+        None
+        """
+        # Exports a csv of the dataframe
+        self.merged_dataframe.to_csv("Combined.csv")
+        logging.debug("Pandas dataframe created, and csv file created")
 
 
 
@@ -780,29 +786,22 @@ def main():
 ##############################################################
         # creats birth weight object
     birth = BirthDataStats()
+    birth.birth_csv()
 
     if args.web_output:
         birth.yearly_bw_state("web")
-        birth.yearly_bw_county("web")
-        birth.lowest_weight_in_state("web")
-        birth.highest_weight_in_state("web")
+        birth.lowest_weight_in_state("web", "2018")
+        birth.highest_weight_in_state("web", "2018")
     else:
         birth.yearly_bw_state("pdf")
-        birth.yearly_bw_county("pdf")
-        birth.lowest_weight_in_state("pdf")
-        birth.highest_weight_in_state("pdf")
+        birth.lowest_weight_in_state("pdf", "2018")
+        birth.highest_weight_in_state("pdf", "2018")
   
 ####################################################################
  #merged object and charts, change or toss if you don't like them
     combined = BirthWeight_and_AirQuality(air_quality_obj, birth)
-
-    if args.web_output:
-        combined.AQI_bw_by_state_bar_chart("web")
-        combined.AQI_bw_by_county_area_chart("web")
-
-    else:
-        combined.AQI_bw_by_state_bar_chart("pdf")
-        combined.AQI_bw_by_county_area_chart("pdf")
+    combined.combined_csv()
+    
 
 if __name__ == '__main__':
     main()
