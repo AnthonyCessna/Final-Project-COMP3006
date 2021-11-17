@@ -3,7 +3,7 @@
   ## Data Sets 
   - annual_aqi_by_county.csv: data breaking down air quality metrics by state and county
   - birth_data.csv: data breaking down average birth weight by state and county
-  - combined.csv: a merging and massaging of the birth data and air quality data set with derived metrics sucha as air quality score 
+  - combined.csv: a merging and massaging of the birth data and air quality data set with derived metrics such as air quality score 
   and state breakdowns of min, max, and avg birth weights for further analysis
   
   ## Research Question
