@@ -1,9 +1,9 @@
 # Final-Project-COMP3006
 
-## Data Sets 
-- annual_aqi_by_county.csv: data breaking down air quality metrics by state and county
-- birth_data.csv: data breaking down average birth weight by state and county
-- combined.csv: a merging and massaging of the birth data and air quality data set with derived metrics sucha as air quality score 
+  ## Data Sets 
+  - annual_aqi_by_county.csv: data breaking down air quality metrics by state and county
+  - birth_data.csv: data breaking down average birth weight by state and county
+  - combined.csv: a merging and massaging of the birth data and air quality data set with derived metrics sucha as air quality score 
   and state breakdowns of min, max, and avg birth weights for further analysis
   
   ## Research Question
@@ -29,8 +29,8 @@
   run requirments.txt in a venv, then use command python3 air*.py with below command line arguments
   
   ### Required Command Line Arguments (choose one, listed options are required)
-  - store:  stores pdf or csv locally (required options: --pdf or  --csv)
-  - render: renders charts/analysis on your browser (required option: --web)
+  - 'store':  stores pdf or csv locally (required options: --pdf or  --csv)
+  - 'render': renders charts/analysis on your browser (required option: --web)
   
   ### options (choice required)
   - -p, --pdf:   prints analytic graphs to a pdf 
