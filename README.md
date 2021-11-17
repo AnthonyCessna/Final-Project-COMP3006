@@ -27,7 +27,7 @@
   # How To Operate
   run requirments.txt in a venv, then use command python3 air*.py with below command line arguments
   ### commands:
-  - -p --pd   prints analytic graphs to a pdf
+  - -p --pdf   prints analytic graphs to a pdf
   - -c --csv  writes the data sets listed above to a csv
   - -w --web  renders the analytic graphs to your browser 
  
