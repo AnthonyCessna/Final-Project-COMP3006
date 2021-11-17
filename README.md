@@ -46,7 +46,7 @@
 
   ### examples: 
   - 'python3 air_quality_and_birth_weight_analysis.py  store  -p  all'     (prints all graphs to pdfs locally)
-  - 'python3 air_quality_and_birth_weight_analysis.py  render  --web  combined '  (renders research question analysis to your browser)
+  - 'python3 air_quality_and_birth_weight_analysis.py  render  --web  combined'  (renders research question analysis to your browser)
   
 
 
