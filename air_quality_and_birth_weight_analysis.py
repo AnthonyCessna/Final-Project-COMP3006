@@ -872,8 +872,7 @@ def main():
     
     # Creates objects of the air quality data, birth data and combined
     air_quality_obj = Import_AirQuality_Data()
-    birth = BirthDataStats()
-    combined = BirthWeight_and_AirQuality(air_quality_obj, birth)
+   
     
     
 
@@ -882,43 +881,51 @@ def main():
         air_quality_obj.chloropleth_usa_map("air_quality_score", "web")
         air_quality_obj.extreme_aqi_values_sunburst("web")
   
-    elif (args.PDF == "air_quality" or args.PDF == "all") and args.command == 'store':
+    if (args.PDF == "air_quality" or args.PDF == "all") and args.command == 'store':
         air_quality_obj.chloropleth_usa_map("air_quality_score", "pdf")
         air_quality_obj.extreme_aqi_values_sunburst("pdf")
     
-    elif (args.CSV == "air_quality" or args.CSV == "all") and args.command == 'store':
+    if (args.CSV == "air_quality" or args.CSV == "all") and args.command == 'store':
         air_quality_obj.air_quality_csv()
     
+    ####################################################################################
+    #birth weight data 
+    birth = BirthDataStats()
 
-    elif (args.WEB == "birth_weight" or args.WEB == "all") and args.command == 'render':
+
+    if (args.WEB == "birth_weight" or args.WEB == "all") and args.command == 'render':
         birth.yearly_bw_state("web")
         birth.lowest_weight_in_state("web", "2018")
         birth.highest_weight_in_state("web", "2018")
    
 
-    elif (args.PDF == "birth_weight" or args.PDF == "all") and args.command == 'store':
+    if (args.PDF == "birth_weight" or args.PDF == "all") and args.command == 'store':
         birth.yearly_bw_state("pdf")
         birth.lowest_weight_in_state("pdf", "2018")
         birth.highest_weight_in_state("pdf", "2018")
 
 
-    elif (args.CSV == "birth_weight" or args.CSV == "all") and args.command == 'store':
+    if (args.CSV == "birth_weight" or args.CSV == "all") and args.command == 'store':
         birth.birth_csv()
     
    
+####################################################################################
+#combined data
+    combined = BirthWeight_and_AirQuality(air_quality_obj, birth)
 
-    elif (args.WEB == "combined" or args.WEB == "all") and args.command == "render":
+    if (args.WEB == "combined" or args.WEB == "all") and args.command == "render":
         combined.state_air_quality_bw_breakdown("web")
     
 
-    elif (args.PDF == "combined" or args.PDF == "all") and args.command == "store":
+    if (args.PDF == "combined" or args.PDF == "all") and args.command == "store":
         combined.state_air_quality_bw_breakdown("pdf")
    
 
-    elif (args.CSV == "combined" or args.CSV == "all") and args.command == "store":
+    if (args.CSV == "combined" or args.CSV == "all") and args.command == "store":
         combined.combined_csv()
-    
-    else:
+  ##################################################################################
+ #check for wrong options woth comand line args
+    if (args.CSV and args.command == "render") or (args.PDF and args.command == "render") or (args.WEB and args.command == "store":
         print(" please use right option with required command 'render' -w --web, 'store' -p -- pdf or -c --csv ")
 
 
