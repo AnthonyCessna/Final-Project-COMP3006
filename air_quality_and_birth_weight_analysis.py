@@ -850,6 +850,11 @@ def main():
         description="Analyze air quality data and birth rate data to find trends"
     )
 
+    #store is for pdf or csv, render is for web
+    parser.add_argument(choices =["store", "render"], dest='command',
+    action ="store", type =str, help= "required command to execute")
+
+
     # If flag is included out put interactive plots to interactive web format, default is to save plots as pdf's
     parser.add_argument("-w", "--web_output",dest="WEB",  metavar = '<web output>', choices =["air_quality",
     "birth_weight","combined","all"])
@@ -866,15 +871,15 @@ def main():
     # Creates object of the air quality data
     air_quality_obj = Import_AirQuality_Data()
 
-    if args.WEB == "air_quality" or args.WEB == "all":
+    if (args.WEB == "air_quality" or args.WEB == "all")  and args.command == 'render':
         air_quality_obj.chloropleth_usa_map("air_quality_score", "web")
         air_quality_obj.extreme_aqi_values_sunburst("web")
 
-    if args.PDF == "air_quality" or args.PDF == "all":
+    if (args.PDF == "air_quality" or args.PDF == "all") and args.command == 'store':
         air_quality_obj.chloropleth_usa_map("air_quality_score", "pdf")
         air_quality_obj.extreme_aqi_values_sunburst("pdf")
 
-    if args.CSV == "air_quality" or args.CSV == "all":
+    if (args.CSV == "air_quality" or args.CSV == "all") and args.command == 'store':
         air_quality_obj.air_quality_csv()
 
 ##############################################################
@@ -882,30 +887,30 @@ def main():
     birth = BirthDataStats()
 
 
-    if args.WEB == "birth_weight" or args.WEB == "all":
+    if (args.WEB == "birth_weight" or args.WEB == "all") and args.command == 'render':
         birth.yearly_bw_state("web")
         birth.lowest_weight_in_state("web", "2018")
         birth.highest_weight_in_state("web", "2018")
 
-    if args.PDF == "birth_weight" or args.PDF == "all":
+    if (args.PDF == "birth_weight" or args.PDF == "all") and args.command == 'store':
         birth.yearly_bw_state("pdf")
         birth.lowest_weight_in_state("pdf", "2018")
         birth.highest_weight_in_state("pdf", "2018")
 
-    if args.CSV == "birth_weight" or args.CSV == "all":
+    if (args.CSV == "birth_weight" or args.CSV == "all") and args.command == 'store':
         birth.birth_csv()
 
 ####################################################################
  #merged object and charts, change or toss if you don't like them
     combined = BirthWeight_and_AirQuality(air_quality_obj, birth)
 
-    if args.WEB == "combined" or args.WEB == "all":
+    if (args.WEB == "combined" or args.WEB == "all") and args.command == "render":
         combined.state_air_quality_bw_breakdown("web")
 
-    if args.PDF == "combined" or args.PDF == "all":
+    if (args.PDF == "combined" or args.PDF == "all") and args.command == "store":
         combined.state_air_quality_bw_breakdown("pdf")
 
-    if args.CSV == "combined" or args.CSV == "all":
+    if (args.CSV == "combined" or args.CSV == "all") and args.command == "store":
         combined.combined_csv()
 
 
