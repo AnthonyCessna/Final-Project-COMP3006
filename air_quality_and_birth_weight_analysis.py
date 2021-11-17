@@ -821,11 +821,11 @@ class BirthWeight_and_AirQuality():
             logging.debug("writng state AQS & ABW breakdown to web")
 
         elif output == "pdf":
-            fig.write_image("AQS & ABW breakdown all quadrants")
-            fig1.write_image("quadrant 1 AQS & ABW breakdown")
-            fig2.write_image("quadrant 2 AQS & ABW breakdown")
-            fig3.write_image("quadrant 3 AQS & ABW breakdown")
-            fig4.write_image("quadrant 4 AQS & ABW breakdown")
+            fig.write_image("all_quadrants.pdf")
+            fig1.write_image("quadrant_1.pdf")
+            fig2.write_image("quadrant_2.pdf")
+            fig3.write_image("quadrant_3.pdf")
+            fig4.write_image("quadrant_4.pdf")
             logging.debug("writng state AQS & ABW breakdown to pdf")
 
         
@@ -851,51 +851,64 @@ def main():
     )
 
     # If flag is included out put interactive plots to interactive web format, default is to save plots as pdf's
-    parser.add_argument("-w", "--web_output", action="store_true")
+    parser.add_argument("-w", "--web_output",dest="WEB",  metavar = '<web output>', choices =["air_quality",
+    "birth_weight","combined","all"])
 
     # If flag is included output csv file of air quality data
-    parser.add_argument("-c", "--csv", action="store_true")
+    parser.add_argument("-c", "--csv", dest="CSV",  metavar = '<csv output>', choices =["air_quality",
+    "birth_weight","combined","all"])
+
+    parser.add_argument("-p","--pdf", dest="PDF", metavar= '<pdf output', choices = ["air_quality",
+    "birth_weight","combined","all"])
 
     # Parse the arguments given
     args = parser.parse_args()
-
     # Creates object of the air quality data
     air_quality_obj = Import_AirQuality_Data()
-    
-    if args.web_output:
+
+    if args.WEB == "air_quality" or args.WEB == "all":
         air_quality_obj.chloropleth_usa_map("air_quality_score", "web")
         air_quality_obj.extreme_aqi_values_sunburst("web")
-    else:
+
+    if args.PDF == "air_quality" or args.PDF == "all":
         air_quality_obj.chloropleth_usa_map("air_quality_score", "pdf")
         air_quality_obj.extreme_aqi_values_sunburst("pdf")
-    
-    if args.csv:
+
+    if args.CSV == "air_quality" or args.CSV == "all":
         air_quality_obj.air_quality_csv()
 
 ##############################################################
         # creats birth weight object
     birth = BirthDataStats()
-    birth.birth_csv()
 
-    if args.web_output:
+
+    if args.WEB == "birth_weight" or args.WEB == "all":
         birth.yearly_bw_state("web")
         birth.lowest_weight_in_state("web", "2018")
         birth.highest_weight_in_state("web", "2018")
-    else:
+
+    if args.PDF == "birth_weight" or args.PDF == "all":
         birth.yearly_bw_state("pdf")
         birth.lowest_weight_in_state("pdf", "2018")
         birth.highest_weight_in_state("pdf", "2018")
-  
+
+    if args.CSV == "birth_weight" or args.CSV == "all":
+        birth.birth_csv()
+
 ####################################################################
  #merged object and charts, change or toss if you don't like them
     combined = BirthWeight_and_AirQuality(air_quality_obj, birth)
-    combined.combined_csv()
 
-    if args.web_output:
+    if args.WEB == "combined" or args.WEB == "all":
         combined.state_air_quality_bw_breakdown("web")
-    else:
+
+    if args.PDF == "combined" or args.PDF == "all":
         combined.state_air_quality_bw_breakdown("pdf")
-    
+
+    if args.CSV == "combined" or args.CSV == "all":
+        combined.combined_csv()
+
+
 
 if __name__ == '__main__':
     main()
