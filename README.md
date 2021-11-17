@@ -7,7 +7,7 @@
   and state breakdowns of min, max, and avg birth weights for further analysis
   
   ## Research Question
-  Does a states air quality effect birth weights?
+  Does the air quality of a given state have an  effect on birth weights?
      
      
   ## Conclusiuon:
@@ -21,9 +21,9 @@
   - quadrant 3: Low AQS, Low ABW
   - quadrant 4: Low AQS, High ABW
   
-  out of 46 States we had 14 in quadrant 2, 14 in quadrant 4, 9 in quadrant quadrant 1, 9 in quadrant 3. 
-  60% of the states fall in a category of High AQS and low ABW (dirtier air lower birth weight), or low AQS high ABW( cleaner air higher birth weight).
-  This does imply a slight correlation with the change  air quality and the change of birthweight.
+  Out of 46 States we had 14 in quadrant 2, 14 in quadrant 4, 9 in quadrant quadrant 1,  and 9 in quadrant 3. 
+  Over 60% of the states fall in a category of High AQS and low ABW (dirtier air lower birth weight), or low AQS high ABW( cleaner air higher birth weight).
+  This  implies a possible correlation between air quality and birth weight. 
   
   # How To Operate
   run requirments.txt in a venv, then use command python3 air*.py with below command line arguments
