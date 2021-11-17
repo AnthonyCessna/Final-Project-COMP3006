@@ -11,6 +11,7 @@
      
      
   ## Conclusiuon:
+  
   NOTE high Air Quiality Score (AQS) means poor air quality, eg: California AQ ~ 185, this is poorer air quality then a lower AQS
   -------------------------------------------------------------------------------------------------------------------------------
   We did an aggregation of all the counties within the state to gain an "Air Quality Score by State" and an "Average Birth Weight by State" for 46 States. 
