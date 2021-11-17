@@ -31,11 +31,12 @@
   -c --csv  writes the data sets listed above to a csv
   -w --web  renders the analytic graphs to your browser 
  
- ### choices:
- air_quality:  outputs air_quality analysis or data to a PDF, CSV or a web browser depending on the command  (-p --pdf, -c --csv, -w --web)
- birth weight: outputs birth weight analysis or data to a PDF, CSV or a web browser depending on the command  (-p --pdf, -c --csv, -w --web)
- combined:     outputs full research of combined data analysis or data to a PDF, CSV or a web browser depending on the command  (-p --pdf, -c --csv, -w --web)
- all:          outputs all of the above analysis or data to a PDF, CSV or a web browser depending on the command  (-p --pdf, -c --csv, -w --web)
+  ### choices:
+  NOTE choices need to proceed (-p --pdf, -c --csv, -w --web)
+  - air_quality:  outputs air_quality analysis proceeding  
+  - birth weight: outputs birth weight analysis proceeding 
+  - combined:     outputs combined analysis proceeding 
+  - all:            outputs all of the above analysis 
 
 
 
