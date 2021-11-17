@@ -737,10 +737,99 @@ class BirthWeight_and_AirQuality():
         """
         # Exports a csv of the dataframe
         self.merged_dataframe.to_csv("Combined.csv")
-        logging.debug("Pandas dataframe created, and csv file created")
+        logging.debug("Pandas dataframe created, and csv file created") 
+     
+    def state_air_quality_bw_breakdown(self,output):
+
+        """
+        this breaks stats into 4 bins based on median air quality and median average birth wieght by state
+        high ABW and high AQS quadratn 1, low ABW and high AQS, quadrant 2, low ABW and low ABW  quadrant 3, and high ABW and low AQS quadrant 4
+        The boudaries of the bins are the medians of ABW and AQs, we def find a a pattern where out of 46 states in our combined data set
+        we see 14 states in quadrant 2 (Low ABS High AQs) and 14 states in quadrant 4 (High ABS Low AQS).
+        """
+
+        breakdown = self.merged_dataframe[["State","air_quality_score","avg_birth_weight_by_state"]].drop_duplicates()
+        breakdown["avg_birth_weight_by_state"] = breakdown["avg_birth_weight_by_state"].map(lambda x: round(x,3))
+        breakdown["air_quality_score"] = breakdown["air_quality_score"].map(lambda x: round(x,3))
 
 
 
+        # setting median values for quadrant boundaries
+        median_bw = breakdown["avg_birth_weight_by_state"].median()
+        median_aqs = breakdown["air_quality_score"].median()
+
+        #setting qadrant boundries
+        bw_below_median = breakdown["avg_birth_weight_by_state"] < round(median_bw,2)
+        aqs_below_median = breakdown["air_quality_score"] < round(median_aqs,2)
+        bw_above_median = breakdown["avg_birth_weight_by_state"] > round(median_bw,2)
+        aqs_above_median =  breakdown["air_quality_score"] > round(median_aqs,2)
+
+        #building quandrant data sets
+        first_quadrant = breakdown.where(bw_above_median & aqs_above_median).dropna()
+        second_quadrant = breakdown.where(bw_below_median & aqs_above_median).dropna()
+        third_quadrant = breakdown.where(bw_below_median & aqs_below_median).dropna()
+        fourth_quadrant = breakdown.where(bw_above_median & aqs_below_median).dropna()
+
+        #chart that shows break down of all four quadrant
+        fig = px.scatter(breakdown, x = "avg_birth_weight_by_state", y ="air_quality_score", color= "State", size = "avg_birth_weight_by_state",
+        title ="Air Quality Score(AQS) and Average Birth Weight (ABW) by State. (median AQS = blue line, median ABW  = red line)",
+        labels = {"avg_birth_weight_by_state" : 'Average Birth Weight(lbs)', 'air_quality_score': 'Air Quality Score', 'State':"State"})
+        fig.add_vline(x= breakdown["avg_birth_weight_by_state"].median(), line_width = 2, line_dash = 'dash', line_color = "red")
+        fig.add_hline(y= breakdown['air_quality_score'].median(),line_width = 2, line_dash = 'dash', line_color = "blue")
+
+
+
+        #chart that shows the first quadrant breakdown, note it has 13 states
+        fig1 = px.scatter(first_quadrant,x ="avg_birth_weight_by_state" , y ="air_quality_score", color= "State",size = "avg_birth_weight_by_state",
+        title = "Quadrant 1 High ABW & High AQS (median AQS = blue line, median ABW = red line)",
+        labels = {"avg_birth_weight_by_state" : 'Average Birth Weight(lbs)', 'air_quality_score': 'Air Quality Score', 'State':"State"})
+        fig1.add_vline(x= breakdown["avg_birth_weight_by_state"].median(), line_width = 5, line_dash = 'dash', line_color = "red")
+        fig1.add_hline(y= breakdown['air_quality_score'].median(),line_width = 5, line_dash = 'dash', line_color = "blue")
+
+
+
+        #chart that shows the breakdown of the second quadrant
+        fig2 = px.scatter(second_quadrant,x ="avg_birth_weight_by_state" , y ="air_quality_score", color= "State",size = "avg_birth_weight_by_state",
+        title = "Quadrant 2 Low ABW & High AQS  (median AQS = blue line, median ABW = red line)",
+        labels = {"avg_birth_weight_by_state" : 'Average Birth Weight(lbs)', 'air_quality_score': 'Air Quality Score', 'State':"State"})
+        fig2.add_vline(x= breakdown["avg_birth_weight_by_state"].median(), line_width = 5, line_dash = 'dash', line_color = "red")
+        fig2.add_hline(y= breakdown['air_quality_score'].median(),line_width = 5, line_dash = 'dash', line_color = "blue")
+
+
+        #chart that shows tbe breakdown of the third quadrant
+        fig3 = px.scatter(third_quadrant,x ="avg_birth_weight_by_state" , y ="air_quality_score", color= "State",size = "avg_birth_weight_by_state",
+        title = "Quadrant 3 Low ABW & Low AQS (median AQS = blue line, median ABW = red line)",
+        labels = {"avg_birth_weight_by_state" : 'Average Birth Weight(lbs)', 'air_quality_score': 'Air Quality Score', 'State':"State"})
+        fig3.add_vline(x= breakdown["avg_birth_weight_by_state"].median(), line_width = 5, line_dash = 'dash', line_color = "red")
+        fig3.add_hline(y= breakdown['air_quality_score'].median(),line_width = 5, line_dash = 'dash', line_color = "blue")
+
+
+        #chart that shows the breakdown of the fourth quadrant
+        fig4 = px.scatter(fourth_quadrant,x ="avg_birth_weight_by_state" , y ="air_quality_score", color= "State", size = "avg_birth_weight_by_state",
+        title = "Quadrant 4 High ABW & Low AQS (median air quality score = blue line, median average birth weight = red line)",
+        labels = {"avg_birth_weight_by_state" : 'Average Birth Weight(lbs)', 'air_quality_score': 'Air Quality Score', 'State':"State"})
+        fig4.add_vline(x= breakdown["avg_birth_weight_by_state"].median(), line_width = 5, line_dash = 'dash', line_color = "red")
+        fig4.add_hline(y= breakdown['air_quality_score'].median(),line_width = 5, line_dash = 'dash', line_color = "blue")
+
+        if output == "web":
+
+            fig.show()
+            fig1.show()
+            fig2.show()
+            fig3.show()
+            fig4.show()
+            logging.debug("writng state AQS & ABW breakdown to web")
+
+        elif output == "pdf":
+            fig.write_image("AQS & ABW breakdown all quadrants")
+            fig1.write_image("quadrant 1 AQS & ABW breakdown")
+            fig2.write_image("quadrant 2 AQS & ABW breakdown")
+            fig3.write_image("quadrant 3 AQS & ABW breakdown")
+            fig4.write_image("quadrant 4 AQS & ABW breakdown")
+            logging.debug("writng state AQS & ABW breakdown to pdf")
+
+        
+    
 def main():
     # sets root logger to DEBUG
     rootLogger = logging.getLogger()
@@ -801,6 +890,11 @@ def main():
  #merged object and charts, change or toss if you don't like them
     combined = BirthWeight_and_AirQuality(air_quality_obj, birth)
     combined.combined_csv()
+
+    if args.web_output:
+        combined.state_air_quality_bw_breakdown("web")
+    else:
+        combined.state_air_quality_bw_breakdown("pdf")
     
 
 if __name__ == '__main__':
