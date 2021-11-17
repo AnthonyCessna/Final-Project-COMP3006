@@ -855,81 +855,71 @@ def main():
     action ="store", type =str, help= "required command to execute")
 
 
-    # If flag is included out put interactive plots to interactive web format, default is to save plots as pdf's
+    # option for render comand
     parser.add_argument("-w", "--web_output",dest="WEB",  metavar = '<web output>', choices =["air_quality",
     "birth_weight","combined","all"])
 
-    # If flag is included output csv file of air quality data
+    # option for store command
     parser.add_argument("-c", "--csv", dest="CSV",  metavar = '<csv output>', choices =["air_quality",
     "birth_weight","combined","all"])
-
+    
+    # option for store command
     parser.add_argument("-p","--pdf", dest="PDF", metavar= '<pdf output', choices = ["air_quality",
     "birth_weight","combined","all"])
 
     # Parse the arguments given
     args = parser.parse_args()
-    # Creates object of the air quality data
+    
+    # Creates objects of the air quality data, birth data and combined
     air_quality_obj = Import_AirQuality_Data()
+    birth = BirthDataStats()
+    combined = BirthWeight_and_AirQuality(air_quality_obj, birth)
+    
+    
 
+    # command line argument logic checks
     if (args.WEB == "air_quality" or args.WEB == "all")  and args.command == 'render':
         air_quality_obj.chloropleth_usa_map("air_quality_score", "web")
         air_quality_obj.extreme_aqi_values_sunburst("web")
-    else:
-        print(" -w option with choice required with render command")
-
-    if (args.PDF == "air_quality" or args.PDF == "all") and args.command == 'store':
+  
+    elif (args.PDF == "air_quality" or args.PDF == "all") and args.command == 'store':
         air_quality_obj.chloropleth_usa_map("air_quality_score", "pdf")
         air_quality_obj.extreme_aqi_values_sunburst("pdf")
-    else:
-        print(" -p or -c  option with choice required with store command")
-
-    if (args.CSV == "air_quality" or args.CSV == "all") and args.command == 'store':
+    
+    elif (args.CSV == "air_quality" or args.CSV == "all") and args.command == 'store':
         air_quality_obj.air_quality_csv()
-    else:
-        print(" -p or -c  option with choice required with store command")
+    
 
-##############################################################
-        # creats birth weight object
-    birth = BirthDataStats()
-
-
-    if (args.WEB == "birth_weight" or args.WEB == "all") and args.command == 'render':
+    elif (args.WEB == "birth_weight" or args.WEB == "all") and args.command == 'render':
         birth.yearly_bw_state("web")
         birth.lowest_weight_in_state("web", "2018")
         birth.highest_weight_in_state("web", "2018")
-    else:
-        print(" -w option with choice required with render command")
+   
 
-    if (args.PDF == "birth_weight" or args.PDF == "all") and args.command == 'store':
+    elif (args.PDF == "birth_weight" or args.PDF == "all") and args.command == 'store':
         birth.yearly_bw_state("pdf")
         birth.lowest_weight_in_state("pdf", "2018")
         birth.highest_weight_in_state("pdf", "2018")
-    else:
-        print(" -p or -c  option with choice required with store command")
 
-    if (args.CSV == "birth_weight" or args.CSV == "all") and args.command == 'store':
+
+    elif (args.CSV == "birth_weight" or args.CSV == "all") and args.command == 'store':
         birth.birth_csv()
-    else:
-        print(" -p or -c  option with choice required with store command")
+    
+   
 
-####################################################################
- #merged object and charts, change or toss if you don't like them
-    combined = BirthWeight_and_AirQuality(air_quality_obj, birth)
-
-    if (args.WEB == "combined" or args.WEB == "all") and args.command == "render":
+    elif (args.WEB == "combined" or args.WEB == "all") and args.command == "render":
         combined.state_air_quality_bw_breakdown("web")
-    else:
-        print(" -w option with choice required with render command")
+    
 
-    if (args.PDF == "combined" or args.PDF == "all") and args.command == "store":
+    elif (args.PDF == "combined" or args.PDF == "all") and args.command == "store":
         combined.state_air_quality_bw_breakdown("pdf")
-    else:
-        print(" -p or -c  option with choice required with store command")
+   
 
-    if (args.CSV == "combined" or args.CSV == "all") and args.command == "store":
+    elif (args.CSV == "combined" or args.CSV == "all") and args.command == "store":
         combined.combined_csv()
+    
     else:
-        print(" -p or -c  option with choice required with store command")
+        print(" please use right option with required command 'render' -w --web, 'store' -p -- pdf or -c --csv ")
 
 
 
