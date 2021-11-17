@@ -874,13 +874,19 @@ def main():
     if (args.WEB == "air_quality" or args.WEB == "all")  and args.command == 'render':
         air_quality_obj.chloropleth_usa_map("air_quality_score", "web")
         air_quality_obj.extreme_aqi_values_sunburst("web")
+    else:
+        print(" -w option with choice required with render command")
 
     if (args.PDF == "air_quality" or args.PDF == "all") and args.command == 'store':
         air_quality_obj.chloropleth_usa_map("air_quality_score", "pdf")
         air_quality_obj.extreme_aqi_values_sunburst("pdf")
+    else:
+        print(" -p or -c  option with choice required with store command")
 
     if (args.CSV == "air_quality" or args.CSV == "all") and args.command == 'store':
         air_quality_obj.air_quality_csv()
+    else:
+        print(" -p or -c  option with choice required with store command")
 
 ##############################################################
         # creats birth weight object
@@ -891,14 +897,20 @@ def main():
         birth.yearly_bw_state("web")
         birth.lowest_weight_in_state("web", "2018")
         birth.highest_weight_in_state("web", "2018")
+    else:
+        print(" -w option with choice required with render command")
 
     if (args.PDF == "birth_weight" or args.PDF == "all") and args.command == 'store':
         birth.yearly_bw_state("pdf")
         birth.lowest_weight_in_state("pdf", "2018")
         birth.highest_weight_in_state("pdf", "2018")
+    else:
+        print(" -p or -c  option with choice required with store command")
 
     if (args.CSV == "birth_weight" or args.CSV == "all") and args.command == 'store':
         birth.birth_csv()
+    else:
+        print(" -p or -c  option with choice required with store command")
 
 ####################################################################
  #merged object and charts, change or toss if you don't like them
@@ -906,12 +918,18 @@ def main():
 
     if (args.WEB == "combined" or args.WEB == "all") and args.command == "render":
         combined.state_air_quality_bw_breakdown("web")
+    else:
+        print(" -w option with choice required with render command")
 
     if (args.PDF == "combined" or args.PDF == "all") and args.command == "store":
         combined.state_air_quality_bw_breakdown("pdf")
+    else:
+        print(" -p or -c  option with choice required with store command")
 
     if (args.CSV == "combined" or args.CSV == "all") and args.command == "store":
         combined.combined_csv()
+    else:
+        print(" -p or -c  option with choice required with store command")
 
 
 
