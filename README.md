@@ -29,13 +29,13 @@
   run requirments.txt in a venv, then use command python3 air*.py with below command line arguments
   
   ### Required Command Line Arguments (choose one, listed options are required)
-  - store  stores pdf or csv locally (required options: --pdf or  --csv)
-  - render renders charts/analysis on your browser (required option: --web)
+  - store:  stores pdf or csv locally (required options: --pdf or  --csv)
+  - render: renders charts/analysis on your browser (required option: --web)
   
-  ### options: (choice required)
-  - -p --pdf   prints analytic graphs to a pdf 
-  - -c --csv  writes the data sets listed above to a csv
-  - -w --web  renders the analytic graphs to your browser 
+  ### options (choice required)
+  - -p, --pdf:   prints analytic graphs to a pdf 
+  - -c, --csv:  writes the data sets listed above to a csv
+  - -w, --web:  renders the analytic graphs to your browser 
  
   ### choices:
   NOTE choices need to proceed (-p --pdf, -c --csv, -w --web)
