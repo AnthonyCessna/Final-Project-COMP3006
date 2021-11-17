@@ -925,7 +925,7 @@ def main():
         combined.combined_csv()
   ##################################################################################
  #check for wrong options woth comand line args
-    if (args.CSV and args.command == "render") or (args.PDF and args.command == "render") or (args.WEB and args.command == "store":
+    if (args.CSV and args.command == "render") or (args.PDF and args.command == "render") or (args.WEB and args.command == "store"):
         print(" please use right option with required command 'render' -w --web, 'store' -p -- pdf or -c --csv ")
 
 
