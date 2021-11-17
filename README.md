@@ -21,9 +21,9 @@
   - quadrant 3: Low AQS, Low ABW
   - quadrant 4: Low AQS, High ABW
   
-  Out of 46 States we had 14 in quadrant 2, 14 in quadrant 4, 9 in quadrant quadrant 1,  and 9 in quadrant 3. 
+  Out of 46 States,  14 are in quadrant 2, 14  are in quadrant 4, 9  are in quadrant quadrant 1, and 9 are in quadrant 3. 
   Over 60% of the states fall in a category of High AQS and low ABW (dirtier air lower birth weight), or low AQS high ABW( cleaner air higher birth weight).
-  This  implies a possible correlation between air quality and birth weight. 
+  This  implies a possible correlation between air quality and birth weight. Visulaizations that further explain this analysis are available with the combined         choice presented below.
   
   # How To Operate
   run requirments.txt in a venv, then use command python3 air*.py with below command line arguments
