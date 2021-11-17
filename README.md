@@ -11,16 +11,15 @@
      
      
   ## Conclusiuon:
-  
   NOTE high Air Quiality Score (AQS) means poor air quality, eg: California AQ ~ 185, this is poorer air quality then a lower AQS
-  -------------------------------------------------------------------------------------------------------------------------------
+  
   We did an aggregation of all the counties within the state to gain an "Air Quality Score by State" and an "Average Birth Weight by State" for 46 States. 
   Then created four quadrants that categorized states in the following: 
   
-  quadrant 1: High AQS, High ABW 
-  quadrant 2: High AQS, Low ABW
-  quadrant 3: Low AQS, Low ABW
-  quadrant 4: Low AQS, High ABW
+  - quadrant 1: High AQS, High ABW 
+  - quadrant 2: High AQS, Low ABW
+  - quadrant 3: Low AQS, Low ABW
+  - quadrant 4: Low AQS, High ABW
   
   out of 46 States we had 14 in quadrant 2, 14 in quadrant 4, 9 in quadrant quadrant 1, 9 in quadrant 3. 
   60% of the states fall in a category of High AQS and low ABW (dirtier air lower birth weight), or low AQS high ABW( cleaner air higher birth weight).
