@@ -28,16 +28,16 @@
   command line arguments:
   - there are 3 commands (-p --pdf, -c --csv, -w --web), with each command having 4 choices (air_quality, birth_weight , combined, all)
   
-  commands:
- -p --pdf   ->  prints analytic graphs to a pdf
- -c --csv   ->  writes the data sets listed above to a csv
- -w --web   ->  renders the analytic graphs to your browser 
+  ###commands:
+ -[-p --pdf]   ->  prints analytic graphs to a pdf
+ -[-c --csv]   ->  writes the data sets listed above to a csv
+ -[-w --web]   ->  renders the analytic graphs to your browser 
  
- choices:
- air_quality  -> outputs air_quality analysis or data to a PDF, CSV or a web browser depending on the command  (-p --pdf, -c --csv, -w --web)
- birth weight -> outputs birth weight analysis or data to a PDF, CSV or a web browser depending on the command  (-p --pdf, -c --csv, -w --web)
- combined     ->  outputs full research of combined data analysis or data to a PDF, CSV or a web browser depending on the command  (-p --pdf, -c --csv, -w --web)
- all          ->  outputs all of the above analysis or data to a PDF, CSV or a web browser depending on the command  (-p --pdf, -c --csv, -w --web)
+ ###choices:
+ - air_quality  -> outputs air_quality analysis or data to a PDF, CSV or a web browser depending on the command  (-p --pdf, -c --csv, -w --web)
+ - birth weight -> outputs birth weight analysis or data to a PDF, CSV or a web browser depending on the command  (-p --pdf, -c --csv, -w --web)
+ - combined     ->  outputs full research of combined data analysis or data to a PDF, CSV or a web browser depending on the command  (-p --pdf, -c --csv, -w --web)
+ - all          ->  outputs all of the above analysis or data to a PDF, CSV or a web browser depending on the command  (-p --pdf, -c --csv, -w --web)
 
 
 
