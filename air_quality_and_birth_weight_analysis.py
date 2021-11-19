@@ -583,6 +583,13 @@ class BirthDataStats():
 
 
     def birth_data(self):
+        """
+        Creates list of BirthObjects 
+
+        Parameters
+        ----------
+        None
+        """
         self.data = []
         Birth = namedtuple("Birth"," year, county_state, a,b,c,d,e, weight, f,g")
 
@@ -602,6 +609,13 @@ class BirthDataStats():
 
 
     def pandas_df(self):
+        """
+        Makes a pandas dataframe from the data and calculates summary statistics 
+
+        Parameters
+        ----------
+        None
+        """
         data_frame = pd.DataFrame(self.data)
         
         data_frame["avg_birth_weight_by_state"] = data_frame.groupby(["state", "year"])["average_birth_weight"].transform("mean")
@@ -641,6 +655,13 @@ class BirthDataStats():
         logging.debug("Pandas dataframe created, and csv file created")
 
     def yearly_bw_state(self,output):
+        """
+        Creates a scatter plot breaking down average birthweight byt state
+
+        Parameters
+        ----------
+        None
+        """
         tst = self.df
         fig = px.scatter(tst, x = "state", y = "avg_birth_weight_by_state", color ="year",
             title = "2016-2018 Breakdown of Average Birthweight by State", labels={
@@ -659,6 +680,13 @@ class BirthDataStats():
 
 
     def lowest_weight_in_state(self,output, year):
+        """
+        Outputs plot displaying the counties in the state with the minimum average birthweight
+
+        Parameters
+        ----------
+        None
+        """
         temp = self.df
         temp_year = temp[temp["year"] == year]
         temp_drop = temp_year.drop_duplicates(subset="state")
@@ -672,13 +700,20 @@ class BirthDataStats():
         if output == "web":
 
             fig.show()
-            logging.debug("Lowest birth weight in state scatter chart to web")
+            logging.debug("Lowest birth weight in state bar chart to web")
 
         elif output == "pdf":
             fig.write_image("lowest_weight_in_state.pdf")
-            logging.debug("Lowest weight in state scatter chart output to pdf")
+            logging.debug("Lowest weight in state bar chart output to pdf")
 
     def highest_weight_in_state(self,output, year):
+        """
+        Outputs bar chart displaying the county in a state with the highest birthweight
+
+        Parameters
+        ----------
+        None
+        """
         temp = self.df
         temp_year = temp[temp["year"] == year]
         temp_drop = temp_year.drop_duplicates(subset="state")
@@ -692,11 +727,11 @@ class BirthDataStats():
         if output == "web":
 
             fig.show()
-            logging.debug("Highest birth weight in state scatter chart to web")
+            logging.debug("Highest birth weight in state bar chart to web")
 
         elif output == "pdf":
             fig.write_image("highest_weight_in_state.pdf")
-            logging.debug("Highest weight in state scatter chart output to pdf")   
+            logging.debug("Highest weight in state bar chart output to pdf")   
 
 class BirthWeight_and_AirQuality():
 
@@ -706,6 +741,15 @@ class BirthWeight_and_AirQuality():
         self.merged_dataframe = self.combined_dataframe()
 
     def combined_dataframe(self):
+        """
+        Combines the airQuality and BirthWeight data sets into a pandas dataframe for further 
+        analysis.
+
+        Parameters
+        ----------
+        None
+        """
+
         air_quality_df = self.air_quality_obj.dataframe
         birth_df = self.birth_obj.df
         birth_df = birth_df[birth_df["year"] == "2018"]
@@ -722,6 +766,8 @@ class BirthWeight_and_AirQuality():
         birth_df["state_abbrev"] = abbrev_list
 
         merged_df = pd.merge(air_quality_df, birth_df, on=["County", "state_abbrev"])
+
+        logging.debug("Data sets succesfully merged")
         
         return merged_df
 
