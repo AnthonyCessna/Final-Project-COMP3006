@@ -13,3 +13,4 @@ Best_and_Worst_AQI_by_State.pdf
 __pycache__/
 air_quality_and_birth_weight_analysis.py
 Birth_Data.csv
+env/lib64
